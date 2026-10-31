@@ -1,13 +1,63 @@
 // use prisma-8
 
+// User, Session, Account and Verification follow Better Auth's core schema.
+// Better Auth reads and writes them; Prisma owns their DDL. Do not run
+// `auth migrate` against this database. See src/lib/auth.ts.
+
 model User {
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
+  username      String?
+  name          String
+  emailVerified Boolean  @default(false)
+  image         String?
+  posts         Post[]
+  createdAt     TimestamptzString @default(now())
+  updatedAt     temporal.UpdatedAtString
+}
+
+model Session {
   id        Int      @id @default(autoincrement())
-  email     String   @unique
-  username  String?
-  name      String?
-  posts     Post[]
-  createdAt TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
+  expiresAt DateTime
+  token     String   @unique
+  ipAddress String?
+  userAgent String?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+
+  @@index([userId])
+}
+
+model Account {
+  id                    Int       @id @default(autoincrement())
+  accountId             String
+  providerId            String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                Int
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime
+
+  @@index([userId])
+}
+
+model Verification {
+  id         Int      @id @default(autoincrement())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime
+
+  @@index([identifier])
 }
 
 model Post {
@@ -17,5 +67,5 @@ model Post {
   author    User     @relation(fields: [authorId], references: [id])
   authorId  Int
   createdAt TimestamptzString @default(now())
-  updatedAt temporal.updatedAtString()
+  updatedAt temporal.UpdatedAtString
 }
