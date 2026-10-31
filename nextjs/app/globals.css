@@ -1,1 +1,15 @@
 @import "tailwindcss";
+
+/* Design tokens. See STYLE_GUIDE.md. */
+@theme {
+  --color-paper: #fbf8ef;
+  --color-paper-dark: #f3eedf;
+  --color-ink: #141414;
+  --font-sans: var(--font-andika), ui-sans-serif, system-ui, sans-serif;
+  --radius-*: initial;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+}

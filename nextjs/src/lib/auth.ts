@@ -11,5 +11,12 @@ export const auth = betterAuth({
   verification: { modelName: "Verification" },
   // Prisma contract uses autoincrement Int ids.
   advanced: { database: { generateId: "serial" } },
-  emailAndPassword: { enabled: true },
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      // Only people who already have a User row can sign in.
+      disableSignUp: true,
+    },
+  },
 });
